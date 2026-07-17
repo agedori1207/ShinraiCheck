@@ -4,11 +4,13 @@ services:
     runtime: node
     plan: free
     rootDir: web
-    buildCommand: npm ci && npm run build
+    buildCommand: npm ci --no-audit --no-fund && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
+      - key: NODE_VERSION
+        value: "20.19.5"
       - key: SEARCH_RESULT_COUNT
         value: "12"
       - key: WIKIPEDIA_RESULT_COUNT
