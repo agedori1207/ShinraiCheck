@@ -140,12 +140,21 @@ export function analyzeEvidence(claim: string, results: SearchResult[]): Analysi
     };
   });
 
-  const supportingRaw = sources
-    .filter((source) => source.stance === "support")
-    .reduce((sum, source) => sum + source.contribution, 0);
-  const contradictingRaw = sources
-    .filter((source) => source.stance === "contradict")
-    .reduce((sum, source) => sum + source.contribution, 0);
+  // 同じ媒体内の複数ページを独立した証拠として重複加算しない。
+  // 各ドメインについて、最も強い寄与だけを採用する。
+  function contributionByIndependentDomain(stance: EvidenceStance): number {
+    const strongest = new Map<string, number>();
+    for (const source of sources.filter((item) => item.stance === stance)) {
+      strongest.set(
+        source.domain,
+        Math.max(strongest.get(source.domain) ?? 0, source.contribution),
+      );
+    }
+    return [...strongest.values()].reduce((sum, value) => sum + value, 0);
+  }
+
+  const supportingRaw = contributionByIndependentDomain("support");
+  const contradictingRaw = contributionByIndependentDomain("contradict");
 
   const supportDomains = independentDomains(sources, "support");
   const contradictDomains = independentDomains(sources, "contradict");
@@ -217,7 +226,7 @@ export function analyzeEvidence(claim: string, results: SearchResult[]): Analysi
 
   const warnings = [
     "この数値は数学的な真実の確率ではなく、取得できた公開情報から計算した推定スコアです。",
-    "検索結果のタイトルと概要を中心に分析するMVPです。重要な判断では原文と一次資料を確認してください。",
+    "Wikipediaの概要とGDELTが収集した記事タイトルを中心に分析する無料MVPです。重要な判断では原文と一次資料を確認してください。",
     "速報・災害・医療・法律などは情報が更新されるため、判定時刻も確認してください。",
   ];
 
@@ -237,6 +246,6 @@ export function analyzeEvidence(claim: string, results: SearchResult[]): Analysi
     sources: sources.sort((a, b) => b.contribution - a.contribution),
     warnings,
     analyzedAt: new Date().toISOString(),
-    methodologyVersion: "mvp-1.0",
+    methodologyVersion: "mvp-1.1-free",
   };
 }

@@ -72,7 +72,7 @@ export default function Home() {
       <header className="hero">
         <p className="eyebrow">SOURCE-TRANSPARENT FACT CHECK</p>
         <h1>ShinraiCheck</h1>
-        <p className="lead">ネット上の複数ソースを比較し、判定理由と使用したURLをすべて表示します。</p>
+        <p className="lead">無料のWikipedia・GDELTを使って複数ソースを比較し、判定理由と使用したURLをすべて表示します。</p>
       </header>
 
       <section className="panel input-panel">

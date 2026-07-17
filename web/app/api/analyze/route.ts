@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { analyzeEvidence } from "@/lib/analyzer";
-import { searchWeb } from "@/lib/brave";
+import { searchFreeSources } from "@/lib/search";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,8 +23,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = await searchWeb(claim);
-    const analysis = analyzeEvidence(claim, results);
+    const search = await searchFreeSources(claim);
+    const analysis = analyzeEvidence(claim, search.results);
+    analysis.warnings.push(...search.warnings);
+
     return NextResponse.json(analysis, {
       headers: { "Cache-Control": "no-store" },
     });

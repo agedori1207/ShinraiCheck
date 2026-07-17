@@ -88,6 +88,16 @@ export function reputationForUrl(url: string): ReputationResult {
     };
   }
 
+  if (host.endsWith("wikipedia.org")) {
+    return {
+      score: 0.68,
+      category: "共同編集百科事典",
+      reasons: [
+        "出典確認に役立つ共同編集百科事典ですが、記事自体を一次資料とは扱いません",
+      ],
+    };
+  }
+
   for (const [domain, score] of Object.entries(MAJOR_NEWS)) {
     if (matchesDomain(host, domain)) {
       return {

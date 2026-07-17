@@ -9,9 +9,11 @@ services:
     healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
-      - key: BRAVE_SEARCH_API_KEY
-        sync: false
       - key: SEARCH_RESULT_COUNT
         value: "12"
+      - key: WIKIPEDIA_RESULT_COUNT
+        value: "4"
+      - key: GDELT_RESULT_COUNT
+        value: "8"
       - key: NODE_ENV
         value: production
